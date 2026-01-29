@@ -16,7 +16,7 @@ MonoBehaviour:
   groundAcceleration: 20
   groundDeceleration: 15
   accelerationMultiplier: 2
-  jumpHeight: 100
+  jumpHeight: 40
   gravity: 1
   <AirAcceleration>k__BackingField: 20
   <CameraBounds>k__BackingField: 30
