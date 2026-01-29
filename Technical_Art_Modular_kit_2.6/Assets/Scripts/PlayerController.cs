@@ -1,54 +1,48 @@
-using System;
-using System.Linq;
 using UnityEngine;
-using Random = System.Random;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
     private InputController _inputController;
     private CharacterController _characterController;
-    
+
     [Header("Movement")]
-    [SerializeField] LayerMask groundLayer;
+    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private PlayerControllerConfig controllerConfig;
+
     private Vector2 _moveInput;
     private Vector3 _currentVelocity;
     private bool _isGrounded;
-    
+
     [Header("Look Rotation")]
     [SerializeField] private Transform lookTarget;
-    private Vector2 _mouseRotation; 
-    private Vector2 _mouseSensitivity;
-  
-  
-   private bool _canMove = true;
+    private Vector2 _mouseRotation;
 
-   void Awake()
+    private bool _canMove = true;
+
+    void Awake()
     {
         _characterController = GetComponent<CharacterController>();
         _inputController = GetComponent<InputController>();
-        
     }
 
     void OnEnable()
     {
-        if (_inputController != null) 
+        if (_inputController != null)
         {
             _inputController.MoveEvent += MovementInput;
             _inputController.JumpEvent += JumpInput;
             _inputController.MouseLookEvent += RotationInput;
-            
         }
     }
-    private void OnDisable() // this is for handeling the error MissingReferenceException
+
+    void OnDisable()
     {
         if (_inputController != null)
         {
             _inputController.MoveEvent -= MovementInput;
             _inputController.JumpEvent -= JumpInput;
             _inputController.MouseLookEvent -= RotationInput;
-           
         }
     }
 
@@ -56,110 +50,145 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-     }
+    }
 
-    
     void Update()
     {
-        
         if (_canMove)
         {
             Movement();
-            Jump();
+            ApplyGravityAndMove();
             Rotate();
         }
+
         ClampRotation();
-     
     }
 
-   private void MovementInput (Vector2 movement)
+    // ================= INPUT =================
+
+    private void MovementInput(Vector2 movement)
     {
-       _moveInput = movement; 
+        _moveInput = movement;
     }
-
-    private void Movement()
-    {
-        Vector3 targetDirection = transform.right * _moveInput.x + transform.forward * _moveInput.y;
-        Vector3 targetVelocity = targetDirection * controllerConfig.MovementSpeed;
-
-        float acceleration = IsGrounded() ? controllerConfig.groundAcceleration : controllerConfig.AirAcceleration;
-        
-        _currentVelocity =  Vector3.MoveTowards(_currentVelocity, targetVelocity, acceleration  * Time.deltaTime); //Time.deltaTime is for stopping player to float 
-        Vector3 horizontalFinalVelocity = new Vector3(_currentVelocity.x, 0, _currentVelocity.z);//Ignore the Y velocity and take into account x,z 
-        Vector3 deceleratedVelocity = Vector3.MoveTowards(horizontalFinalVelocity, Vector3.zero, controllerConfig.groundDeceleration* Time.deltaTime); //Vector3.MoveTowards(a, b, maxDistanceDelta)
-
-        //DECELERATION
-        if (targetDirection == Vector3.zero)// if input is realized return;
-        {
-            _currentVelocity.x = deceleratedVelocity.x;
-            _currentVelocity.z = deceleratedVelocity.z;
-        }
-        
-    }
-    
 
     private void RotationInput(Vector2 mouseRotation)
     {
-       _mouseRotation = mouseRotation;
+        _mouseRotation = mouseRotation;
     }
 
-    private void Rotate()
-    {
-        transform.Rotate(Vector3.up, _mouseRotation.x * controllerConfig.mouseSensitivity);
-        lookTarget.Rotate(Vector3.right, -_mouseRotation.y * controllerConfig.mouseSensitivity);
-    }
-    
-    private void ClampRotation()
-    {
-        //Camera Clamp Rotation
-        float currentX = lookTarget.rotation.eulerAngles.x;
-        if (currentX > 180) // look at the opposite direction camerabounds
-        {
-            if (currentX < 360 - controllerConfig.CameraBounds)
-            {
-                currentX = 360 - controllerConfig.CameraBounds;
-            }
-        }
-        else if (currentX > controllerConfig.CameraBounds)
-        {
-            currentX = controllerConfig.CameraBounds;
+    // ================= MOVEMENT =================
 
+    private void Movement()
+    {
+        Vector3 targetDirection =
+            transform.right * _moveInput.x +
+            transform.forward * _moveInput.y;
+
+        Vector3 targetVelocity = targetDirection * controllerConfig.MovementSpeed;
+
+        float acceleration = IsGrounded()
+            ? controllerConfig.groundAcceleration
+            : controllerConfig.AirAcceleration;
+
+        _currentVelocity = Vector3.MoveTowards(
+            _currentVelocity,
+            targetVelocity,
+            acceleration * Time.deltaTime
+        );
+
+        // Deceleration
+        if (targetDirection == Vector3.zero)
+        {
+            Vector3 horizontalVelocity = new Vector3(
+                _currentVelocity.x,
+                0,
+                _currentVelocity.z
+            );
+
+            Vector3 decelerated = Vector3.MoveTowards(
+                horizontalVelocity,
+                Vector3.zero,
+                controllerConfig.groundDeceleration * Time.deltaTime
+            );
+
+            _currentVelocity.x = decelerated.x;
+            _currentVelocity.z = decelerated.z;
         }
-        Vector3 clampRotation = transform.eulerAngles;
-        clampRotation.x = currentX;
-        lookTarget.eulerAngles = clampRotation;
     }
-    
+
+    // ================= JUMP & GRAVITY =================
 
     private void JumpInput()
     {
-        
-        if (IsGrounded())
+        if (!IsGrounded()) return;
+
+        // Salto físicamente correcto
+        _currentVelocity.y = Mathf.Sqrt(
+            controllerConfig.jumpHeight *
+            -2f *
+            Physics.gravity.y *
+            controllerConfig.gravity
+        );
+    }
+
+    private void ApplyGravityAndMove()
+    {
+        if (IsGrounded() && _currentVelocity.y < 0f)
         {
-            _currentVelocity.y = controllerConfig.jumpHeight;
-            
+            _currentVelocity.y = -2f; // mantiene contacto con el suelo
         }
-        
+
+        // Gravedad SIEMPRE
+        _currentVelocity.y +=
+            Physics.gravity.y * controllerConfig.gravity * Time.deltaTime;
+
+        _characterController.Move(_currentVelocity * Time.deltaTime);
     }
 
     private bool IsGrounded()
     {
-        _isGrounded = Physics.SphereCast(transform.position, .5f, Vector3.down, out RaycastHit hit, .6f, groundLayer);
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+
+        _isGrounded = Physics.SphereCast(
+            origin,
+            _characterController.radius * 0.9f,
+            Vector3.down,
+            out _,
+            (_characterController.height / 2f) + 0.2f,
+            groundLayer
+        );
+
         return _isGrounded;
     }
 
-    private void Jump()
-    {
-        if (!IsGrounded()) //if the player is not touching the floor do this...
-        {
-            _currentVelocity.y += Physics.gravity.y * controllerConfig.gravity *Time.deltaTime;
-            Debug.Log("Velocity "+_currentVelocity.y);
-          
-        }
-        _characterController.Move(_currentVelocity * Time.deltaTime);
+    // ================= ROTATION =================
 
+    private void Rotate()
+    {
+        transform.Rotate(
+            Vector3.up,
+            _mouseRotation.x * controllerConfig.mouseSensitivity * Time.deltaTime
+        );
+
+        lookTarget.Rotate(
+            Vector3.right,
+            -_mouseRotation.y * controllerConfig.mouseSensitivity * Time.deltaTime
+        );
     }
 
-   
-  
+    private void ClampRotation()
+    {
+        float currentX = lookTarget.localEulerAngles.x;
+
+        if (currentX > 180)
+            currentX -= 360;
+
+        currentX = Mathf.Clamp(
+            currentX,
+            -controllerConfig.CameraBounds,
+            controllerConfig.CameraBounds
+        );
+
+        lookTarget.localEulerAngles = new Vector3(currentX, 0f, 0f);
+    }
 }
