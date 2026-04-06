@@ -199,7 +199,7 @@ Material:
     - _MetallicRemapMin: 0
     - _Mode: 3
     - _NormalMapSpace: 0
-    - _NormalScale: 0.3
+    - _NormalScale: 0
     - _ObjectSpaceUVMapping: 0
     - _ObjectSpaceUVMappingEmissive: 0
     - _OcclusionStrength: 1
