@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 1901792803233043853}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.147, y: 5.525, z: -0.036}
+  m_LocalPosition: {x: -0.147, y: 7.256, z: 0.083}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -89,7 +89,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 16015
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 20.353554}
+  m_BoundingSphereOverride: {x: 7.02e-43, y: 1.89e-43, z: 0, w: 4.3e-44}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
@@ -267,7 +267,7 @@ Transform:
   m_GameObject: {fileID: 7282044916506584194}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.147, y: 2.525, z: -0.036}
+  m_LocalPosition: {x: -0.147, y: 2.37, z: -0.036}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -283,8 +283,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 11
   m_Type: 2
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 20653.463
+  m_Color: {r: 0.54147387, g: 0.62495327, b: 0.9811321, a: 1}
+  m_Intensity: 2687.6062
   m_Range: 20
   m_SpotAngle: 87.57583
   m_InnerSpotAngle: 21.80208
@@ -329,7 +329,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 16015
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 20.353554}
+  m_BoundingSphereOverride: {x: 9.186e-42, y: 2.524355e-29, z: 0, w: 1.8e-43}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
@@ -506,7 +506,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.5000005, y: 2.5, z: 2.5000005}
+  m_LocalScale: {x: 2.4999998, y: 2.5, z: 2.4999998}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1160267149173738651}
