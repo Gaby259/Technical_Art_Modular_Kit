@@ -80,9 +80,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1038502633769812825, guid: c818f97a21501a045b891a53c2d5867a, type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2016969248684171824, guid: c818f97a21501a045b891a53c2d5867a, type: 3}
       propertyPath: m_Name
       value: Platform_Pillar_Bars
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016969248684171824, guid: c818f97a21501a045b891a53c2d5867a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
